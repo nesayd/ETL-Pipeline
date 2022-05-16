@@ -4,7 +4,7 @@ In this repo you can find an end-to-end automated data pipeline that loads XBRL 
 
 These XBRL files include the text and detailed numeric information from all financial statements and their notes submitted by filers to the Commission from 2009 on. The zip files are loaded on website quarterly between 2009 and 2020 and monthly after 10/2020. 
 
-The data extracted from the XBRL submissions is organized into eight data sets in .tsv format containing information about submissions, numbers, taxonomy tags, presentation, and more.  Each data set consists of rows and fields, and is provided as a tab-delimited TXT format file.  The data sets are as follows:
+The data extracted from the XBRL submissions is organized into eight data sets in .tsv format containing information about submissions, numbers, taxonomy tags, presentation, and more.  Each data set consists of rows and fields, and is provided as a tab-delimited TXT format file.  The datasets are as follows:
 
 * SUB – Submission data set; this includes one record for each XBRL submission. The set includes fields of information pertinent to the submission and the filing entity. Information is extracted from the Commission's EDGAR system and the filings submitted to the Commission by registrants.
 * TAG – Tag data set; includes defining information about each tag.  Information includes tag descriptions (documentation labels), taxonomy version information and other tag attributes.
