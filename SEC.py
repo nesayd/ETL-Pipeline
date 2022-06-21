@@ -333,6 +333,6 @@ links = get_links(url)
 download_zipfiles(download_path, links)
 unzip(unzip_path, download_path)
 upload_append_csv_files(text_file_path=text_file_path, unzip_path=unzip_path,
-                        dataset_path=dataset_path, dataset_name='SEC_XBRL', username='neset06')
+                        dataset_path=dataset_path, dataset_name='SEC_XBRL', username='XXX')
 
 print(f"The whole script runs in: {time.time() - start} seconds")
