@@ -291,7 +291,7 @@ def send_slack_message(message):
         PATH: ./unzip_files/2011q3_notes/txt.tsv
         Removed Row Indices: ['188992.', '217128.', '217709.']"
     '''
-    url = "https://hooks.slack.com/workflows/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"
+    url = "https://hooks.slack.com/xxx"
     payload = {"text":message}
     
     try:
