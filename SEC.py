@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 '''
-This program creates a data pipeline to load XBRL datasets from the SEC website onto Redivis platform. This dataset provides a lot of good information from SEC filings in a tabular format. During this ETL process, I build an automated pipeline with format checks and data type checks by scraping the SEC website, downloading monthly or quarterly zipfiles into the Yens directory, unzipping them in a new folder, looking up for only .tsv files in the folder, converting the .tsv files into .csv files, and finally uploading them to Redivis platform.
+This program creates a data pipeline to load XBRL datasets from the SEC website onto Redivis platform. 
+This dataset provides a lot of good information from SEC filings in a tabular format. During this ETL process, I build an 
+automated pipeline with format checks and data type checks by scraping the SEC website, downloading monthly or quarterly 
+zipfiles into the Yens directory, unzipping them in a new folder, looking up for only .tsv files in the folder, converting 
+the .tsv files into .csv files, and finally uploading them to Redivis platform.
 
 Author: Neset Aydin
 Date: 5/9/2022
