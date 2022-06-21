@@ -76,7 +76,6 @@ def unzip(unzip_path:str, zip_files:str) -> None:
     Returns: 
         Does not return anything.
     '''
-
     for (dirpath, dirnames, filenames) in walk(zip_files):
         for file in filenames: 
             if file.endswith(".zip"):
@@ -88,7 +87,6 @@ def unzip(unzip_path:str, zip_files:str) -> None:
                     with zipfile.ZipFile(fullpath, 'r') as zip_ref:
                         zip_ref.extractall(unzip_folder) 
                     logging.info(f"Successfully unzipped {foldername}!!")
-
 
 def get_uploaded_tables(text_file_path:str) -> list:
     '''
@@ -121,9 +119,6 @@ def write_uploaded_tables(text_file_path:str, table_name_full_path:str) -> None:
         f.write(table_name_full_path)
         f.write('\n')
 
-
-        
-
 def upload_to_redivis(table_name:str,dataset_path:str,dataset)->None:
     '''
     Creates a new table on Redivis that will append each time the file with the same name gets uploaded.
@@ -136,12 +131,10 @@ def upload_to_redivis(table_name:str,dataset_path:str,dataset)->None:
         Does not return anything.
     '''
     table = (dataset.table(table_name))
-
     if not table.exists():
         table.create(description=None, upload_merge_strategy="append")
 
     upload = table.upload(table_name) 
-    
     full_path = dataset_path+'/'+table_name+'.csv'
     
     #Quality check control here 
@@ -152,7 +145,6 @@ def upload_to_redivis(table_name:str,dataset_path:str,dataset)->None:
     #Get shape from Redivis before uploading 
     table.get()
     if 'numRows' in table.properties: 
-     
         prev_row_count = table.properties['numRows']
         prev_col_count = table.properties['variableCount']
     else: 
@@ -160,7 +152,7 @@ def upload_to_redivis(table_name:str,dataset_path:str,dataset)->None:
         prev_col_count = 0
     
     #Uploading
-    # try: 
+
     with open(full_path, "rb") as file:
         upload.create(
             file, 
@@ -173,21 +165,12 @@ def upload_to_redivis(table_name:str,dataset_path:str,dataset)->None:
             wait_for_finish=True,
             raise_on_fail=True,
         )
-#     except Exception as e: 
-#         if hasattr(e, 'message'): 
-#             if 'An error occured while transferring' in e.message: 
-#                 logging.error("Network Connection Error occured. Check Redivis Platform. Manage imports. Delete the errorred upload(s). Rerun the script!")
-#                 raise Exception
-                
-                
-    
         
     #Get shape from Redivis after uploading
     table.get()
     after_row_count = table.properties['numRows']
     after_col_count = table.properties['variableCount']
     logging.info(f"After uploading the CSV file: Rows: {after_row_count - prev_row_count} , Columns: {after_col_count} ")
-
 
 def get_paths_dict(text_file_path:str, unzip_path:str, dataset_name:str)->dict:
     '''
@@ -202,22 +185,17 @@ def get_paths_dict(text_file_path:str, unzip_path:str, dataset_name:str)->dict:
         d (dictionary): a dictionary of filenames as keys and a list of full paths of those files as values
         dataset (string): the name of the dataset created on Redivis  
     '''
-    
     dataset = redivis.organization("StanfordGSBLibrary").dataset(dataset_name)
     
     #if you are creating the dataset yourself on Redivis platform manually, just use your username. 
     #(don't forget pass an argument to the function for username). below line is the script:
     # dataset = redivis.user(username).dataset(dataset_name)
-    
     #if dataset exists, donot create the same one. 
    
-
     if not dataset.exists():
         dataset.create(public_access_level="data")
  
-    
     d = defaultdict(list) 
-    
     uploaded_files = get_uploaded_tables(text_file_path)
 
     for (dirpath, dirnames, filenames) in walk(unzip_path):
@@ -228,7 +206,6 @@ def get_paths_dict(text_file_path:str, unzip_path:str, dataset_name:str)->dict:
                     d[file].append(file_path) #file name as our key e.g. tag.tsv
 
     d = {k: sorted(v, reverse=False) for k,v in d.items()}
-    
     return d, dataset
 
 def upload_append_csv_files(text_file_path: str, unzip_path:str , dataset_path:str, 
@@ -247,7 +224,6 @@ def upload_append_csv_files(text_file_path: str, unzip_path:str , dataset_path:s
     Returns:
         Does not return anything. 
     """
-    
     d, dataset = get_paths_dict(text_file_path,unzip_path,dataset_name)
     if not d: 
         logging.info("Redivis database is up to date. Nothing to upload at the moment! Wait until next month.")
@@ -265,9 +241,7 @@ def upload_append_csv_files(text_file_path: str, unzip_path:str , dataset_path:s
                 write_uploaded_tables(text_file_path, path)
                 logging.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
                 continue
-                
-
-            
+  
             logging.info("Number of rows: " + str(len(file)-1))
             line_list = []
             invalid_rows_counter = 0
@@ -276,9 +250,7 @@ def upload_append_csv_files(text_file_path: str, unzip_path:str , dataset_path:s
                 splitted = line.split('\t')
                 cleaned = [line.replace("\\"," ").replace("\"", '"').replace("\'", "'").replace("\n","") for line in splitted]
                 line_list.append(cleaned)
-                
         
-             
                 if len(cleaned) != len(line_list[0]):
                     line_list.remove(cleaned)
                     invalid_rows_counter += 1
@@ -292,12 +264,9 @@ def upload_append_csv_files(text_file_path: str, unzip_path:str , dataset_path:s
             logging.info(f"% of rows skipped: {round((invalid_rows_counter/(len(file)-1))*100,3): .3f}")
 
             df = pd.DataFrame(line_list[1:], columns=line_list[0])
-            
-            
             csv_path = dataset_path+'/'+table_name+'.csv'
             df.to_csv(csv_path, index=False)
             upload_to_redivis(table_name,dataset_path,dataset)
-            
             logging.info(f"Successfully uploaded {csv_path.split('/')[-1]} into {dataset_name} dataset on Redivis!")
             write_uploaded_tables(text_file_path, path)
             logging.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
@@ -343,6 +312,7 @@ def set_logger(path, logging_level):
     '''
     if not os.path.exists("Logs"):
         os.makedirs("Logs")
+
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%a, %d %b %Y %H:%M:%S', filename=f'{path}/ETL.log', filemode='a')    
     
